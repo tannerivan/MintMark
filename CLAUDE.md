@@ -59,9 +59,16 @@ No photo upload, no price alerts, no community features, no foreign coins, no ma
 - shadcn/ui for base components, customized to brand
 - Every architectural or product decision goes in DECISIONS.md immediately
 
+## Active Conventions (learned during build)
+- Prisma 7 requires `PrismaNeonHttp(connectionString)` HTTP adapter — no URL in schema or constructor
+- `prisma.config.ts` must explicitly load `.env.local` via dotenv — Prisma CLI doesn't use Next.js env loading
+- `ws` package not needed — HTTP adapter handles Neon connection without WebSockets
+- Restaurant analogy is the preferred plain-English explanation format for the owner-operator
+
 ## How We Work
 - Owner-operator reviews every phase before next begins
 - Senior dev (Claude) explains WHY on every non-obvious architectural choice — one sentence
+- Plain English restaurant analogy used when explaining what we built or are about to build
 - STATUS.md updated at end of every session without being asked
 - No code outside V1 scope
 - Personality is enforced at code review — clinical copy gets rejected
