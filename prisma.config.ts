@@ -21,7 +21,9 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
+    // directUrl (for Neon migrations) is not typed in Prisma 7's defineConfig.
+    // Migrations use the CLI directly with DATABASE_URL — the app only needs
+    // the pooled URL here.
     url: process.env.DATABASE_URL!,
-    directUrl: process.env.DIRECT_URL,
   },
 });

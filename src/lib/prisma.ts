@@ -26,9 +26,9 @@ function createPrismaClient() {
     throw new Error("[MintMark] DATABASE_URL is not set");
   }
 
-  // PrismaNeonHttp takes the connection string directly and creates the neon()
-  // client internally. Do NOT pass a neon() result — pass the raw URL string.
-  const adapter = new PrismaNeonHttp(connectionString);
+  // PrismaNeonHttp takes the connection string and HTTP query options.
+  // Empty options object uses Neon HTTP defaults — correct for serverless.
+  const adapter = new PrismaNeonHttp(connectionString, {});
 
   return new PrismaClient({
     adapter,
