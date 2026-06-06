@@ -1,0 +1,122 @@
+// MintMark™ Prisma Schema
+// Neon PostgreSQL via @prisma/client
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+// Connection URLs are configured in prisma.config.ts (Prisma 7 requirement).
+// See prisma.config.ts for the Neon pooled vs. direct URL explanation.
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// USER
+// Clerk is the auth source of truth. We mirror only what we need here:
+// the Clerk user ID (our FK throughout), subscription status, and lookup count.
+// Populated/updated via Clerk webhook on user.created / user.updated.
+// ─────────────────────────────────────────────────────────────────────────────
+model User {
+  id              String        @id               // Clerk user_XXXX ID
+  email           String        @unique
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Subscription
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  stripePriceId        String?
+  subscriptionStatus   String?  // active | canceled | past_due | trialing
+  subscriptionEndsAt   DateTime?
+
+  // Relations
+  lookups         CoinLookup[]
+  savedCoins      SavedCoin[]
+
+  @@index([stripeCustomerId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COIN LOOKUP
+// Every lookup is recorded — anonymous (userId null) and authenticated.
+// This is our usage audit trail and the source of truth for rate limiting
+// fallback (Upstash Redis is primary; this is backup if Redis is unavailable).
+// ─────────────────────────────────────────────────────────────────────────────
+model CoinLookup {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+
+  // Coin identity
+  year          Int
+  mintMark      String?   // P | D | S | W | CC | O | null (Philadelphia pre-1980)
+  denomination  String    // cent | nickel | dime | quarter | half | dollar
+  series        String?   // Lincoln Memorial | Morgan | etc.
+
+  // AI result stored as JSON — structured fields + narrative
+  analysisJson  Json?     // structured: { keyDate, gradeceiling, mintage, errors, varieties, valueRange, worthGrading }
+  narrative     String?   // the personality-forward summary text
+
+  // Attribution
+  userId        String?   // null = anonymous
+  ipAddress     String?   // for anonymous rate limiting; never stored for logged-in users
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([year, mintMark, denomination]) // deduplicate cache hits
+
+  // Back-relations
+  savedBy         SavedCoin[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAVED COIN (Collection)
+// A user pins a lookup to their collection. Points back to the CoinLookup
+// so we don't duplicate analysis data — just the user's personal notes.
+// ─────────────────────────────────────────────────────────────────────────────
+model SavedCoin {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lookupId    String
+  lookup      CoinLookup  @relation(fields: [lookupId], references: [id], onDelete: Cascade)
+
+  // User's personal annotation
+  userNotes   String?
+  grade       String?     // user's own grade assessment
+  acquiredFor Decimal?    @db.Decimal(10, 2)
+
+  @@unique([userId, lookupId]) // can't save the same lookup twice
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DAILY CHALLENGE
+// Static seeded list for V1 (90+ entries). One active entry per day.
+// activeDate is set at seed time; the app queries WHERE activeDate = today.
+// V2: AI cron replaces static seed.
+// ─────────────────────────────────────────────────────────────────────────────
+model DailyChallenge {
+  id            String    @id @default(cuid())
+  activeDate    DateTime  @unique @db.Date // one per calendar day
+
+  // The coin to look for
+  year          Int
+  mintMark      String?
+  denomination  String
+  series        String?
+
+  // Editorial content
+  headline      String    // "Today's Find: The 1955 Doubled Die"
+  teaser        String    // one or two sentences of excitement — brand voice required
+  funFact       String?   // optional extra detail
+
+  createdAt     DateTime  @default(now())
+
+  @@index([activeDate])
+}
