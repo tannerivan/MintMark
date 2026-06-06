@@ -20,13 +20,26 @@ _Updated: 2026-06-06_
 - [x] Neon DB + Upstash Redis both confirmed connected
 - [x] GitHub remote corrected to github.com/tannerivan/MintMark
 
+## Complete
+### Phase 1 — Coin Lookup Core ✅
+- [x] AI engine: full prompt, all guardrails, structured JSON + narrative
+- [x] valueRange.dataSource field kept open for V2 live market swap
+- [x] src/lib/coin-data.ts: 31 series across 6 denominations
+- [x] src/lib/pcgs.ts: photo URLs, reference links, grading links, affiliate via env
+- [x] POST /api/lookup: rate limit → AI → DB → response
+- [x] POST /api/webhooks/clerk: svix-verified user sync
+- [x] Home page with search form (Clerk v7 auth() pattern)
+- [x] Results page: server-rendered, data from DB
+- [x] CoinSearchForm: full form with personality loading state
+- [x] ResultsReveal: 8-card scratch-ticket reveal with staggered animations
+- [x] CoinPhoto: PCGS hotlink + graceful fallback
+- [x] ValueRange: 3-column display + non-negotiable disclaimer
+- [x] ExternalLinks: PCGS, NGC, Coppercoins, CONECA + grading links
+- [x] MintMark brand tokens: copper palette, reveal animations
+- [x] Build: ✓ clean, 0 TypeScript errors
+
 ## In Progress
-### Phase 1 — Coin Lookup Core 🔄
-- [x] Prompt schema designed and reviewed by owner-operator
-- [x] Four guardrails locked in (bad input, value honesty, low confidence, scope)
-- [x] Value disclaimer language approved
-- [x] V2 MintMark Market tier logged in DECISIONS.md — door kept open
-- [ ] Owner-operator final sign-off on complete recipe card → then code starts
+- Nothing — Phase 1 complete, ready for live test then Phase 2
 
 ## Blocked
 - STRIPE_PRO_PRICE_ID still placeholder — not blocking until Phase 2

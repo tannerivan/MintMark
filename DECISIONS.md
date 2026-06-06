@@ -35,4 +35,9 @@ _Every architectural or product decision lives here. One line + reason._
 | Value disclaimer is a trust feature, not a legal disclaimer | Displayed under every value range: "Values estimated from historical sales data — verify current prices on PCGS, NGC, or eBay completed sales before buying or selling." |
 | Four prompt guardrails locked in before Phase 1 code | Bad input handling, value honesty framing, low-confidence behavior, and US-coin-only scope boundary are baked into the AI prompt permanently |
 
+| Next.js 16: middleware.ts → proxy.ts | Next.js 16 deprecated the middleware file convention; renamed to proxy.ts |
+| Clerk v7: use auth() directly in Server Components | SignedIn/SignedOut removed from Clerk v7; Server Components call auth() and conditionally render |
+| PrismaNeonHttp requires (connectionString, {}) — 2 args | TypeScript signature requires options object as second arg; empty object uses HTTP defaults |
+| Prisma client regenerated after every clean npm install | Clean installs wipe node_modules/.prisma/client — add `prisma generate` to postinstall script in V2 |
+
 _Add new decisions below as they're made._
