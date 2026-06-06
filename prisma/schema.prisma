@@ -1,9 +1,13 @@
 // MintMark™ Prisma Schema
 // Neon PostgreSQL via @prisma/client
 
+// Prisma 7 uses a "client" engine that requires a driver adapter.
+// For Neon we use @prisma/adapter-neon + @neondatabase/serverless.
+// previewFeatures is required to enable the driverAdapters feature.
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  provider        = "prisma-client-js"
+  output          = "../node_modules/.prisma/client"
+  // driverAdapters is stable in Prisma 7 — no previewFeatures needed
 }
 
 // Connection URLs are configured in prisma.config.ts (Prisma 7 requirement).

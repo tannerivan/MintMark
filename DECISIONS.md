@@ -27,4 +27,7 @@ _Every architectural or product decision lives here. One line + reason._
 | Pocket Change Challenge: static seeded list (90+ entries) for V1 | Avoids admin interface complexity; AI cron is V2 |
 | Affiliate link IDs via environment variables (placeholders now) | Decouples code from business account approval timeline |
 
+| Prisma 7 + Neon: use `PrismaNeonHttp(connectionString)` HTTP adapter | Prisma 7 requires a driver adapter (not schema URL); HTTP adapter is correct for Vercel serverless — no WebSocket, lower cold-start overhead than Pool |
+| Removed `ws` and `@prisma/adapter-neon` Pool path | HTTP adapter handles connection internally; WebSocket Pool is for long-lived servers, not serverless functions |
+
 _Add new decisions below as they're made._

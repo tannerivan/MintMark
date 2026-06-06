@@ -1,24 +1,41 @@
 /**
- * Prisma client singleton.
+ * Prisma client singleton — Neon HTTP + Prisma 7.
  *
- * Next.js hot reload in development creates a new module instance on every
- * change, which would open a new DB connection each time and exhaust Neon's
- * connection pool within minutes. The global singleton pattern prevents this.
+ * Prisma 7 requires a driver adapter. For Neon serverless we use the HTTP
+ * adapter (PrismaNeonHTTP + neon()) rather than the WebSocket Pool adapter.
+ * HTTP is the right default for Vercel serverless functions: no persistent
+ * connection, no WebSocket setup, lower cold-start overhead.
  *
- * In production, each Vercel serverless function instance gets exactly one
- * PrismaClient — no issue there.
+ * The Pool/WebSocket adapter is better for long-lived servers — not us.
+ *
+ * Singleton pattern: Next.js hot reload in dev creates a new module instance
+ * on every file change, which would open a new connection each time. The
+ * globalThis pattern prevents this without affecting production behavior.
  */
 
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("[MintMark] DATABASE_URL is not set");
+  }
+
+  // PrismaNeonHttp takes the connection string directly and creates the neon()
+  // client internally. Do NOT pass a neon() result — pass the raw URL string.
+  const adapter = new PrismaNeonHttp(connectionString);
+
+  return new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
+}
+
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
