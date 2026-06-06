@@ -8,7 +8,7 @@
  * IMPORTANT — server-side only. This file must never be imported from
  * a Client Component. The ANTHROPIC_API_KEY must never touch the browser.
  *
- * Model choice: claude-3-5-sonnet-20241022
+ * Model choice: claude-sonnet-4-5
  * - Fast enough for interactive use (2–6s typical)
  * - Excellent at structured JSON output
  * - Strong numismatic knowledge
@@ -17,7 +17,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 
-const ANALYSIS_MODEL = "claude-3-5-sonnet-20241022";
+const ANALYSIS_MODEL = "claude-sonnet-4-5";
 const MAX_TOKENS = 1500;
 
 // ─────────────────────────────────────────────────────────────────────────────
