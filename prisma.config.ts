@@ -7,7 +7,12 @@
  *
  * Both are in .env.local. Never commit those values.
  */
-import "dotenv/config";
+// Load .env.local first (Next.js convention), then fall back to .env.
+// dotenv/config only loads .env — Prisma CLI runs outside Next.js and won't
+// pick up .env.local automatically, so we load it explicitly here.
+import { config } from "dotenv";
+config({ path: ".env.local" });
+config({ path: ".env" }); // fallback, won't override already-set vars
 import { defineConfig } from "prisma/config";
 
 export default defineConfig({
