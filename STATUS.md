@@ -22,7 +22,11 @@ _Updated: 2026-06-06_
 
 ## In Progress
 ### Phase 1 — Coin Lookup Core 🔄
-- [ ] Planning (owner-operator review before code)
+- [x] Prompt schema designed and reviewed by owner-operator
+- [x] Four guardrails locked in (bad input, value honesty, low confidence, scope)
+- [x] Value disclaimer language approved
+- [x] V2 MintMark Market tier logged in DECISIONS.md — door kept open
+- [ ] Owner-operator final sign-off on complete recipe card → then code starts
 
 ## Blocked
 - STRIPE_PRO_PRICE_ID still placeholder — not blocking until Phase 2

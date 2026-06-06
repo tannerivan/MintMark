@@ -59,6 +59,21 @@ No photo upload, no price alerts, no community features, no foreign coins, no ma
 - shadcn/ui for base components, customized to brand
 - Every architectural or product decision goes in DECISIONS.md immediately
 
+## V2 Roadmap (decisions made, door kept open)
+- **MintMark Market** (~$14.99/mo): eBay completed sales API + PCGS/NGC price guide integration
+- `valueRange` schema in V1 is designed as a drop-in replacement target — same field shape, live data replaces AI estimates in V2
+- Do not make V1 architecture decisions that close the door on this data layer
+
+## AI Prompt Guardrails (permanent, baked into every lookup)
+1. **Bad input**: If no real US coin matches, return confidence "low" — never fabricate a result
+2. **Value honesty**: All values are historical estimates only — never live prices, never a single precise number, always a range, widen dramatically when data is thin
+3. **Low confidence**: When confidence is medium or low, say so explicitly, widen range dramatically, direct user to external verification
+4. **Scope**: MintMark analyzes US coins only — the prompt explicitly states this boundary regardless of what's submitted
+
+## Value Disclaimer (required on every result page, under value range)
+> "Values estimated from historical sales data — verify current prices on PCGS, NGC, or eBay completed sales before buying or selling."
+This is a trust feature, not a legal disclaimer. Non-negotiable placement.
+
 ## Active Conventions (learned during build)
 - Prisma 7 requires `PrismaNeonHttp(connectionString)` HTTP adapter — no URL in schema or constructor
 - `prisma.config.ts` must explicitly load `.env.local` via dotenv — Prisma CLI doesn't use Next.js env loading

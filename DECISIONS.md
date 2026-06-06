@@ -30,4 +30,9 @@ _Every architectural or product decision lives here. One line + reason._
 | Prisma 7 + Neon: use `PrismaNeonHttp(connectionString)` HTTP adapter | Prisma 7 requires a driver adapter (not schema URL); HTTP adapter is correct for Vercel serverless — no WebSocket, lower cold-start overhead than Pool |
 | Removed `ws` and `@prisma/adapter-neon` Pool path | HTTP adapter handles connection internally; WebSocket Pool is for long-lived servers, not serverless functions |
 
+| V2: MintMark Market tier (~$14.99/mo) — eBay completed sales + PCGS/NGC price guide integration | Primary monetization upgrade; V1 valueRange fields designed to accept live data as a drop-in replacement for AI estimates when this layer is ready |
+| valueRange schema must remain open for live data replacement | V1 uses AI estimates; V2 replaces with live market data — the field shape stays the same, the data source swaps. Do not close this door. |
+| Value disclaimer is a trust feature, not a legal disclaimer | Displayed under every value range: "Values estimated from historical sales data — verify current prices on PCGS, NGC, or eBay completed sales before buying or selling." |
+| Four prompt guardrails locked in before Phase 1 code | Bad input handling, value honesty framing, low-confidence behavior, and US-coin-only scope boundary are baked into the AI prompt permanently |
+
 _Add new decisions below as they're made._
